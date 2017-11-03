@@ -3,6 +3,84 @@ require "pry"
 require 'terminal-table'
 
 
+# Table that holds users score/points 
+scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
+  t << ['One', 1]
+  t << :separator
+  t.add_row ['Two', 2]
+  t.add_separator
+  t.add_row ['Three', 3]
+  t.add_separator
+  t.add_row ['Four', 3]
+  t.add_separator
+  t.add_row ['Five', 3]
+  t.add_separator
+  t.add_row ['Six', 3]
+  t.add_separator
+  t.add_row ['Sum', 3]
+  t.add_separator
+  t.add_row ['Bonus', 3]
+  t.add_separator
+  t.add_row ['Three of a Kind', 3]
+  t.add_separator
+  t.add_row ['Four of a Kind', 3]
+  t.add_separator
+  t.add_row ['Full House', 3]
+  t.add_separator
+  t.add_row ['Small Straight', 3]
+  t.add_separator
+  t.add_row ['Large Straight', 3]
+  t.add_separator
+  t.add_row ['Chance', 3]
+  t.add_separator
+  t.add_row ['YAHTZEE', 3]
+  t.add_separator
+  t.add_row ['TOTAL SCORE', 3]
+end
+
+# Table displayed to user that gives them option to select a category 
+pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
+  t << ['One', 1]
+  t << :separator
+  t.add_row ['Two', 2]
+  t.add_separator
+  t.add_row ['Three', 3]
+  t.add_separator
+  t.add_row ['Four', 3]
+  t.add_separator
+  t.add_row ['Five', 3]
+  t.add_separator
+  t.add_row ['Six', 3]
+  t.add_separator
+  t.add_row ['Sum', 3]
+  t.add_separator
+  t.add_row ['Bonus', 3]
+  t.add_separator
+  t.add_row ['Three of a Kind', 3]
+  t.add_separator
+  t.add_row ['Four of a Kind', 3]
+  t.add_separator
+  t.add_row ['Full House', 3]
+  t.add_separator
+  t.add_row ['Small Straight', 3]
+  t.add_separator
+  t.add_row ['Large Straight', 3]
+  t.add_separator
+  t.add_row ['Chance', 3]
+  t.add_separator
+  t.add_row ['YAHTZEE', 3]
+  t.add_separator
+  t.add_row ['TOTAL SCORE', 3]
+end
+# puts scoresTable
+
+# puts "Select Available Category"
+# category = gets.chomp!
+
+
+
+
+
 arr1 = [1,2,4,2,3]
 arr2 = [2,2,2,6,1]  
 arr3 = [3,3,3,5,1]  
@@ -16,27 +94,48 @@ end
 
 class Game
 
-    def roll
-    
+    def roll     
+        @saved_values ||= []
         @die = (1..6).to_a
         @dicecup = []
-        @die.sample
-        until @dicecup.count == 5 
-          @dicecup << @die.sample
-      end
-      @dicecup
+
+        
+
+        if @saved_values.count > 1
+            @saved_values.each {|x| @dicecup << x }
+            until @dicecup.count == 5 
+                @dicecup << @die.sample
+            end
+        elsif @saved_values.empty? 
+            5.times do |dice|
+                @dicecup << @die.sample
+            end
+            @saved_values = []
+        end
+
+
+        
+
+        p "Here is your roll. Type the dies you want to keep"
+        p @dicecup
+            input = gets.chomp
+            
+        input_array = input.split
+   
+        split_array = input_array.keep_if { |v| v =~ /[1-6]/ }.map(&:to_i)
+
+        split_array.each do |x|
+            if @dicecup.include?(x)
+              @saved_values << x
+            else
+              puts "Please enter dice that are in your cup. No cheating please :) "
+              roll
+            end
+  
+        end
+        
     end
 
-    
-
-    def select
-        @dicecupe
-        binding.pry
-        # what ever one(s) they pick roll the rest
-        @dicecup.select {@dicecup} || @dicecup.count == 5
-        binding.pry
-
-    end
   
   
   def player_turn
@@ -191,11 +290,19 @@ class Game
   end
 end 
 my_game = Game.new
+
+my_game.roll
+my_game.roll
+my_game.roll
+
+
+
 dice_arr= my_game.roll
 dice_arr= [2,2,2,2,2]
 p dice_arr
 p my_game.add_score(dice_arr, "yahtzee")
 # p my_game.show_sum
+
 
 
 
