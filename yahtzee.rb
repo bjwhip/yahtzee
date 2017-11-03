@@ -73,10 +73,10 @@ pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Availabl
   t.add_separator
   t.add_row ['TOTAL SCORE', 3]
 end
-puts scoresTable
+# puts scoresTable
 
-puts "Select Available Category"
-category = gets.chomp!
+# puts "Select Available Category"
+# category = gets.chomp!
 
 
 
@@ -90,31 +90,47 @@ end
 
 class Game
 
-    def roll
-    
+    def roll     
+        @saved_values ||= []
         @die = (1..6).to_a
         @dicecup = []
-        @die.sample
-        until @dicecup.count == 5 
-        @dicecup << @die.sample
+        
+
+        if @saved_values.count > 1
+            @saved_values.each {|x| @dicecup << x }
+            until @dicecup.count == 5 
+                @dicecup << @die.sample
+            end
+        elsif @saved_values.empty? 
+            5.times do |dice|
+                @dicecup << @die.sample
+            end
+            @saved_values = []
+        end
+
+
+        
+
+        p "Here is your roll. Type the dies you want to keep"
+        p @dicecup
+            input = gets.chomp
+            
+        input_array = input.split
+   
+        split_array = input_array.keep_if { |v| v =~ /[1-6]/ }.map(&:to_i)
+
+        split_array.each do |x|
+            if @dicecup.include?(x)
+              @saved_values << x
+            else
+              puts "Please enter dice that are in your cup. No cheating please :) "
+              roll
+            end
+  
+        end
+        
     end
 
-    @dicecup
-
-    def select
-        @dicecupe
-        binding.pry
-        # what ever one(s) they pick roll the rest
-        @dicecup.select {@dicecup} || @dicecup.count == 5
-        binding.pry
-
-    end
-    @dicecup
-
-
-
-    
-end
 
   
   
@@ -148,11 +164,13 @@ end
 
 end  
 my_game = Game.new
-p my_game.roll
-p "Type the dies you want to keep"
+my_game.roll
+my_game.roll
+my_game.roll
 
 
-end
+
+
 
 arr1 = [1,2,4,1,3]   
 arr2 = [2,2,2,6,1]  
