@@ -1,8 +1,7 @@
-
-
 require "pry"
 
 require 'terminal-table'
+
 
 arr1 = [1,2,4,2,3]
 arr2 = [2,2,2,6,1]  
@@ -10,82 +9,6 @@ arr3 = [3,3,3,5,1]
 arr4 = [4,4,1,3,1]  
 arr5 = [5,5,1,1,1]  
 arr6 = [1,6,6,1,1]
-
-# Table that holds users score/points 
-class ScoreCard
-  @scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
-    t << ['One', 1]
-    t << :separator
-    t.add_row ['Two', 2]
-    t.add_separator
-    t.add_row ['Three', 3]
-    t.add_separator
-    t.add_row ['Four', 3]
-    t.add_separator
-    t.add_row ['Five', 3]
-    t.add_separator
-    t.add_row ['Six', 3]
-    t.add_separator
-    t.add_row ['Sum', 3]
-    t.add_separator
-    t.add_row ['Bonus', 3]
-    t.add_separator
-    t.add_row ['Three of a Kind', 3]
-    t.add_separator
-    t.add_row ['Four of a Kind', 3]
-    t.add_separator
-    t.add_row ['Full House', 3]
-    t.add_separator
-    t.add_row ['Small Straight', 3]
-    t.add_separator
-    t.add_row ['Large Straight', 3]
-    t.add_separator
-    t.add_row ['Chance', 3]
-    t.add_separator
-    t.add_row ['YAHTZEE', 3]
-    t.add_separator
-    t.add_row ['TOTAL SCORE', 3]
-  end
-
-# Table displayed to user that gives them option to select a category 
-  @pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
-    t << ['One', 1]
-    t << :separator
-    t.add_row ['Two', 2]
-    t.add_separator
-    t.add_row ['Three', 3]
-    t.add_separator
-    t.add_row ['Four', 3]
-    t.add_separator
-    t.add_row ['Five', 3]
-    t.add_separator
-    t.add_row ['Six', 3]
-    t.add_separator
-    t.add_row ['Sum', 3]
-    t.add_separator
-    t.add_row ['Bonus', 3]
-    t.add_separator
-    t.add_row ['Three of a Kind', 3]
-    t.add_separator
-    t.add_row ['Four of a Kind', 3]
-    t.add_separator
-    t.add_row ['Full House', 3]
-    t.add_separator
-    t.add_row ['Small Straight', 3]
-    t.add_separator
-    t.add_row ['Large Straight', 3]
-    t.add_separator
-    t.add_row ['Chance', 3]
-    t.add_separator
-    t.add_row ['YAHTZEE', 3]
-    t.add_separator
-    t.add_row ['TOTAL SCORE', 3]
-  end
-# puts scoresTable
-
-# puts "Select Available Category"
-# category = gets.chomp!
-end
 
 class Player
 end  
@@ -278,20 +201,90 @@ p my_game.add_score(dice_arr, "yahtzee")
 
 
 
+class ScoreCard
+
+  def initialize
+    @picked ||= []
+  end
+
+  def player_card
+    @scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
+      t << ['One', add_score(arr1, "Ones")]
+      t << :separator
+      t.add_row ['Two', add_score(arr1, "twos")]
+      t.add_separator
+      t.add_row ['Three', add_score(arr1, "threes")]
+      t.add_separator
+      t.add_row ['Four', add_score(arr1, "fours")]
+      t.add_separator
+      t.add_row ['Five', add_score(arr1, "fives")]
+      t.add_separator
+      t.add_row ['Six', add_score(arr1, "sixes")]
+      t.add_separator
+      t.add_row ['Sum', 0]
+      t.add_separator
+      t.add_row ['Bonus', 0]
+      t.add_separator
+      t.add_row ['Three of a Kind', 0]
+      t.add_separator
+      t.add_row ['Four of a Kind', 0]
+      t.add_separator
+      t.add_row ['Full House', 0]
+      t.add_separator
+      t.add_row ['Small Straight', 0]
+      t.add_separator
+      t.add_row ['Large Straight', 0]
+      t.add_separator
+      t.add_row ['Chance', 0]
+      t.add_separator
+      t.add_row ['YAHTZEE', 0]
+      t.add_separator
+      t.add_row ['TOTAL SCORE', 0]
+    end
+  end 
+
+  def chosen
+    puts "Select Available Category"
+    category = gets.chomp!.downcase
+    @picked << category 
+  end
+
+  def display_table
+    pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
+      t << ['One', 0] unless @picked.include? 'one'
+      t << :separator unless @picked.include? 'one'
+      t.add_row ['Two', 0] unless @picked.include? 'two'
+      t.add_separator unless @picked.include? 'two'
+      t.add_row ['Three', 0] unless @picked.include? 'three'
+      t.add_separator unless @picked.include? 'three'
+      t.add_row ['Four', 0] unless @picked.include? 'four'
+      t.add_separator unless @picked.include? 'four'
+      t.add_row ['Five', 0] unless @picked.include? 'five'
+      t.add_separator unless @picked.include? 'five'
+      t.add_row ['Six', 0] unless @picked.include? 'six'
+      t.add_separator unless @picked.include? 'six'
+      t.add_row ['Three of a Kind', 0] unless @picked.include? 'three of a kind'
+      t.add_separator unless @picked.include? 'three of a kind'
+      t.add_row ['Four of a Kind', 0] unless @picked.include? 'four of a kind'
+      t.add_separator unless @picked.include? 'four of a kind'
+      t.add_row ['Full House', 0] unless @picked.include? 'full house'
+      t.add_separator unless @picked.include? 'full house'
+      t.add_row ['Small Straight', 0] unless @picked.include? 'small straight'
+      t.add_separator unless @picked.include? 'small straight'
+      t.add_row ['Large Straight', 0] unless @picked.include? 'large straight'
+      t.add_separator unless @picked.include? 'large straight'
+      t.add_row ['Chance', 0] unless @picked.include? 'chance'
+      t.add_separator unless @picked.include? 'chance'
+      t.add_row ['YAHTZEE', 0] unless @picked.include? 'yahtzee'
+    end 
+    puts pickableTable
+  end
+end
 
 
-
-  
-
-
-
-
-
-
-
-
-
-
-
+myScoreCard = ScoreCard.new
+myScoreCard.display_table
+myScoreCard.chosen
+myScoreCard.display_table
 
 
