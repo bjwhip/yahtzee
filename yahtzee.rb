@@ -15,10 +15,6 @@ end
 
 
 class Game
-  
-
-  
-
 
     def roll
     
@@ -178,7 +174,9 @@ class Game
       50
     else
       0  
-    end            
+    end
+  when "chance"
+   dice_arr.sum           
   else
     puts "It didnt work"
     0  
