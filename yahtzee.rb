@@ -1,97 +1,7 @@
 require "pry"
 
 require 'terminal-table'
-
-
-# Table that holds users score/points 
-scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
-  t << ['One', 1]
-  t << :separator
-  t.add_row ['Two', 2]
-  t.add_separator
-  t.add_row ['Three', 3]
-  t.add_separator
-  t.add_row ['Four', 3]
-  t.add_separator
-  t.add_row ['Five', 3]
-  t.add_separator
-  t.add_row ['Six', 3]
-  t.add_separator
-  t.add_row ['Sum', 3]
-  t.add_separator
-  t.add_row ['Bonus', 3]
-  t.add_separator
-  t.add_row ['Three of a Kind', 3]
-  t.add_separator
-  t.add_row ['Four of a Kind', 3]
-  t.add_separator
-  t.add_row ['Full House', 3]
-  t.add_separator
-  t.add_row ['Small Straight', 3]
-  t.add_separator
-  t.add_row ['Large Straight', 3]
-  t.add_separator
-  t.add_row ['Chance', 3]
-  t.add_separator
-  t.add_row ['YAHTZEE', 3]
-  t.add_separator
-  t.add_row ['TOTAL SCORE', 3]
-end
-
-# Table displayed to user that gives them option to select a category 
-pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
-  t << ['One', 1]
-  t << :separator
-  t.add_row ['Two', 2]
-  t.add_separator
-  t.add_row ['Three', 3]
-  t.add_separator
-  t.add_row ['Four', 3]
-  t.add_separator
-  t.add_row ['Five', 3]
-  t.add_separator
-  t.add_row ['Six', 3]
-  t.add_separator
-  t.add_row ['Sum', 3]
-  t.add_separator
-  t.add_row ['Bonus', 3]
-  t.add_separator
-  t.add_row ['Three of a Kind', 3]
-  t.add_separator
-  t.add_row ['Four of a Kind', 3]
-  t.add_separator
-  t.add_row ['Full House', 3]
-  t.add_separator
-  t.add_row ['Small Straight', 3]
-  t.add_separator
-  t.add_row ['Large Straight', 3]
-  t.add_separator
-  t.add_row ['Chance', 3]
-  t.add_separator
-  t.add_row ['YAHTZEE', 3]
-  t.add_separator
-  t.add_row ['TOTAL SCORE', 3]
-end
-# puts scoresTable
-
-# puts "Select Available Category"
-# category = gets.chomp!
-
-
-
-
-
-arr1 = [1,2,4,2,3]
-arr2 = [2,2,2,6,1]  
-arr3 = [3,3,3,5,1]  
-arr4 = [4,4,1,3,1]  
-arr5 = [5,5,1,1,1]  
-arr6 = [1,6,6,1,1]
-
-class Player
-end  
-
-
+ 
 class Game
 
     def roll     
@@ -139,7 +49,15 @@ class Game
   
   
   def player_turn
-
+    roll
+    puts "Did you want to roll again? y/n"
+    answer = gets.chomp!.downcase
+    answer == "y" || answer == "yes" ? roll : answer
+    puts "Did you want your last roll y/n"
+    answer = gets.chomp!.downcase
+    answer == "y" || answer == "yes" ? roll : answer
+    display_table
+    player_card(@dicecup, @category)
   end
 
   def add_score dice_arr, category
@@ -147,10 +65,12 @@ class Game
     cased_category = category.downcase
     dice_str = dice_arr.map(&:to_s).join("")
     score = 0
+    
     case cased_category
-
+      
     when  "ones"
      if dice_arr.include?(1)
+
       score = dice_arr.keep_if{|x| x == 1}.sum
       @sum += score
       score
@@ -288,76 +208,53 @@ class Game
   def show_sum
     @sum
   end
-end 
-my_game = Game.new
 
-my_game.roll
-my_game.roll
-my_game.roll
+  def player_card dicecup, category
 
-
-
-dice_arr= my_game.roll
-dice_arr= [2,2,2,2,2]
-p dice_arr
-p my_game.add_score(dice_arr, "yahtzee")
-# p my_game.show_sum
-
-
-
-
-class ScoreCard
-
-  def initialize
-    @picked ||= []
-  end
-
-  def player_card
     @scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
-      t << ['One', add_score(arr1, "Ones")]
-      t << :separator
-      t.add_row ['Two', add_score(arr1, "twos")]
+      t.add_row ['One', (category == "one" ? add_score(dicecup, "ones") : 0) ]
       t.add_separator
-      t.add_row ['Three', add_score(arr1, "threes")]
+      t.add_row ['Two', (category == "two" ? add_score(dicecup, "twos") : 0)]
       t.add_separator
-      t.add_row ['Four', add_score(arr1, "fours")]
+      t.add_row ['Three', (category == "three" ? add_score(dicecup, "threes") : 0)]
       t.add_separator
-      t.add_row ['Five', add_score(arr1, "fives")]
+      t.add_row ['Four', (category == "four" ? add_score(dicecup, "fours") : 0)]
       t.add_separator
-      t.add_row ['Six', add_score(arr1, "sixes")]
+      t.add_row ['Five', (category == "five" ? add_score(dicecup, "fives") : 0)]
       t.add_separator
-      t.add_row ['Sum', 0]
+      t.add_row ['Six', (category == "six" ? add_score(dicecup, "sixes") : 0)]
       t.add_separator
-      t.add_row ['Bonus', 0]
+      t.add_row ['Sum', show_sum]
       t.add_separator
-      t.add_row ['Three of a Kind', 0]
+      t.add_row ['Bonus', (show_sum > 63 ? show_sum += 35 : show_sum)]
       t.add_separator
-      t.add_row ['Four of a Kind', 0]
+      t.add_row ['Three of a Kind', (category == "three of a kind" ? add_score(dicecup, "3 of a kind") : 0)]
       t.add_separator
-      t.add_row ['Full House', 0]
+      t.add_row ['Four of a Kind', (category == "four of a kind" ? add_score(dicecup, "4 of a kind") : 0)]
       t.add_separator
-      t.add_row ['Small Straight', 0]
+      t.add_row ['Full House', (category == "full house" ? add_score(dicecup, "full house") : 0)]
       t.add_separator
-      t.add_row ['Large Straight', 0]
+      t.add_row ['Small Straight', (category == "small straight" ? add_score(dicecup, "small straight") : 0)]
       t.add_separator
-      t.add_row ['Chance', 0]
+      t.add_row ['Large Straight', (category == "large straight" ? add_score(dicecup, "large straight") : 0)]
       t.add_separator
-      t.add_row ['YAHTZEE', 0]
+      t.add_row ['Chance', (category == "chance" ? add_score(dicecup, "chance") : 0)]
+      t.add_separator
+      t.add_row ['YAHTZEE', (category == "yahtzee" ? add_score(dicecup, "yahtzee") : 0)]
       t.add_separator
       t.add_row ['TOTAL SCORE', 0]
     end
+    puts @scoresTable
   end 
 
-  def chosen
-    puts "Select Available Category"
-    category = gets.chomp!.downcase
-    @picked << category 
-  end
+  
 
   def display_table
+    @picked ||= []
+    
     pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
-      t << ['One', 0] unless @picked.include? 'one'
-      t << :separator unless @picked.include? 'one'
+      t.add_row ['One', 0] unless @picked.include? 'one'
+      t.add_separator unless @picked.include? 'one'
       t.add_row ['Two', 0] unless @picked.include? 'two'
       t.add_separator unless @picked.include? 'two'
       t.add_row ['Three', 0] unless @picked.include? 'three'
@@ -383,13 +280,39 @@ class ScoreCard
       t.add_row ['YAHTZEE', 0] unless @picked.include? 'yahtzee'
     end 
     puts pickableTable
+    puts "Select Available Category"
+    @category = gets.chomp!.downcase
+    @picked << @category
   end
-end
+end 
 
 
-myScoreCard = ScoreCard.new
-myScoreCard.display_table
-myScoreCard.chosen
-myScoreCard.display_table
+
+
+
+
+# p my_game.show_sum
+
+
+
+
+
+ 
+    
+
+
+  
+
+
+
+# myScoreCard = ScoreCard.new
+# myScoreCard.display_table
+# myScoreCard.chosen
+# myScoreCard.display_table
+my_game = Game.new
+my_game.player_turn
+my_game.player_turn
+# p dice_arr
+# p my_game.add_score(dice_arr, "yahtzee")
 
 
