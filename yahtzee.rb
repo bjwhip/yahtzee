@@ -11,87 +11,80 @@ arr4 = [4,4,1,3,1]
 arr5 = [5,5,1,1,1]  
 arr6 = [1,6,6,1,1]
 
-@sum = 0
-
-
 # Table that holds users score/points 
-scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
-  t << ['One', add_score(arr1, "Ones")]
-  t << :separator
-  t.add_row ['Two', 2]
-  t.add_separator
-  t.add_row ['Three', 3]
-  t.add_separator
-  t.add_row ['Four', 3]
-  t.add_separator
-  t.add_row ['Five', 3]
-  t.add_separator
-  t.add_row ['Six', 3]
-  t.add_separator
-  t.add_row ['Sum', 3]
-  t.add_separator
-  t.add_row ['Bonus', 3]
-  t.add_separator
-  t.add_row ['Three of a Kind', 3]
-  t.add_separator
-  t.add_row ['Four of a Kind', 3]
-  t.add_separator
-  t.add_row ['Full House', 3]
-  t.add_separator
-  t.add_row ['Small Straight', 3]
-  t.add_separator
-  t.add_row ['Large Straight', 3]
-  t.add_separator
-  t.add_row ['Chance', 3]
-  t.add_separator
-  t.add_row ['YAHTZEE', 3]
-  t.add_separator
-  t.add_row ['TOTAL SCORE', 3]
-end
+class ScoreCard
+  @scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
+    t << ['One', 1]
+    t << :separator
+    t.add_row ['Two', 2]
+    t.add_separator
+    t.add_row ['Three', 3]
+    t.add_separator
+    t.add_row ['Four', 3]
+    t.add_separator
+    t.add_row ['Five', 3]
+    t.add_separator
+    t.add_row ['Six', 3]
+    t.add_separator
+    t.add_row ['Sum', 3]
+    t.add_separator
+    t.add_row ['Bonus', 3]
+    t.add_separator
+    t.add_row ['Three of a Kind', 3]
+    t.add_separator
+    t.add_row ['Four of a Kind', 3]
+    t.add_separator
+    t.add_row ['Full House', 3]
+    t.add_separator
+    t.add_row ['Small Straight', 3]
+    t.add_separator
+    t.add_row ['Large Straight', 3]
+    t.add_separator
+    t.add_row ['Chance', 3]
+    t.add_separator
+    t.add_row ['YAHTZEE', 3]
+    t.add_separator
+    t.add_row ['TOTAL SCORE', 3]
+  end
 
 # Table displayed to user that gives them option to select a category 
-pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
-  t << ['One', 1]
-  t << :separator
-  t.add_row ['Two', 2]
-  t.add_separator
-  t.add_row ['Three', 3]
-  t.add_separator
-  t.add_row ['Four', 3]
-  t.add_separator
-  t.add_row ['Five', 3]
-  t.add_separator
-  t.add_row ['Six', 3]
-  t.add_separator
-  t.add_row ['Sum', 3]
-  t.add_separator
-  t.add_row ['Bonus', 3]
-  t.add_separator
-  t.add_row ['Three of a Kind', 3]
-  t.add_separator
-  t.add_row ['Four of a Kind', 3]
-  t.add_separator
-  t.add_row ['Full House', 3]
-  t.add_separator
-  t.add_row ['Small Straight', 3]
-  t.add_separator
-  t.add_row ['Large Straight', 3]
-  t.add_separator
-  t.add_row ['Chance', 3]
-  t.add_separator
-  t.add_row ['YAHTZEE', 3]
-  t.add_separator
-  t.add_row ['TOTAL SCORE', 3]
-end
-puts scoresTable
+  @pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
+    t << ['One', 1]
+    t << :separator
+    t.add_row ['Two', 2]
+    t.add_separator
+    t.add_row ['Three', 3]
+    t.add_separator
+    t.add_row ['Four', 3]
+    t.add_separator
+    t.add_row ['Five', 3]
+    t.add_separator
+    t.add_row ['Six', 3]
+    t.add_separator
+    t.add_row ['Sum', 3]
+    t.add_separator
+    t.add_row ['Bonus', 3]
+    t.add_separator
+    t.add_row ['Three of a Kind', 3]
+    t.add_separator
+    t.add_row ['Four of a Kind', 3]
+    t.add_separator
+    t.add_row ['Full House', 3]
+    t.add_separator
+    t.add_row ['Small Straight', 3]
+    t.add_separator
+    t.add_row ['Large Straight', 3]
+    t.add_separator
+    t.add_row ['Chance', 3]
+    t.add_separator
+    t.add_row ['YAHTZEE', 3]
+    t.add_separator
+    t.add_row ['TOTAL SCORE', 3]
+  end
+# puts scoresTable
 
-puts "Select Available Category"
-category = gets.chomp!
-
-
-
-
-class ScoreCard
+# puts "Select Available Category"
+# category = gets.chomp!
 end
 
 class Player
@@ -99,12 +92,9 @@ end
 
 
 class Game
-
   
 
-  def roll
-
-  end
+  
 
 
     def roll
@@ -113,10 +103,12 @@ class Game
         @dicecup = []
         @die.sample
         until @dicecup.count == 5 
-        @dicecup << @die.sample
+          @dicecup << @die.sample
+      end
+      @dicecup
     end
 
-    @dicecup
+    
 
     def select
         @dicecupe
@@ -126,14 +118,6 @@ class Game
         binding.pry
 
     end
-    @dicecup
-
-
-
-
-    
-end
-
   
   
   def player_turn
@@ -141,6 +125,7 @@ end
   end
 
   def add_score dice_arr, category
+    @sum ||= 0
     cased_category = category.downcase
     dice_str = dice_arr.map(&:to_s).join("")
     score = 0
@@ -152,6 +137,7 @@ end
       @sum += score
       score
     else
+      
       @sum += 0
       0
     end 
@@ -200,22 +186,100 @@ end
      @sum += 0
      0
    end
- else
+  when "3 of a kind"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.take(3)
+    second_slice = dice_arr.slice(2,3)
+    
+    if first_slice.uniq.count == 1
+      first_slice.sum
+    elsif second_slice.uniq.count == 1
+      second_slice.sum
+    else
+      0  
+    end
+  when "4 of a kind"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.take(4)
+    second_slice = dice_arr.slice(1,4)
+    
+    if first_slice.uniq.count == 1
+      first_slice.sum
+    elsif second_slice.uniq.count == 1
+      second_slice.sum
+    else
+      0  
+    end
+  when "full house"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.take(3)
+    second_slice = dice_arr.slice(3,2)
+    third_slice = dice_arr.take(2)
+    fourth_slice = dice_arr.slice(2,3) 
+    if first_slice.uniq.count == 1 && second_slice.uniq.count == 1
+      25
+    elsif third_slice.uniq.count == 1 && fourth_slice.uniq.count == 1
+      25
+    else
+      0  
+    end
+  when "small straight"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.uniq.take(4)
+     
+    if first_slice == (1..4).to_a || first_slice == (2..5).to_a || first_slice == (3..6).to_a 
+      30
+    else
+      0  
+    end
+  when "large straight"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.uniq
+     
+    if first_slice == (1..5).to_a || first_slice == (2..6).to_a  
+      40
+    else
+      0  
+    end
+  when "yahtzee"
+    
+    # p dice_arr
+    first_slice = dice_arr.uniq
+     
+    if first_slice.count == 1   
+      50
+    else
+      0  
+    end            
+  else
+    puts "It didnt work"
+    0  
+  end  
 
+  end
 
-  puts "It didnt work"  
-end  
-
-end  
+  
+   
+  def show_sum
+    @sum
+  end
+end 
 my_game = Game.new
-p my_game.roll
-p "Type the dies you want to keep"
+dice_arr= my_game.roll
+dice_arr= [2,2,2,2,2]
+p dice_arr
+p my_game.add_score(dice_arr, "yahtzee")
+# p my_game.show_sum
 
 
 
-end
 
-end
+
 
   
 
