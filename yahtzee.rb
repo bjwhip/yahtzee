@@ -1,157 +1,81 @@
-
-
 require "pry"
 
 require 'terminal-table'
-
-arr1 = [1,2,4,2,3]
-arr2 = [2,2,2,6,1]  
-arr3 = [3,3,3,5,1]  
-arr4 = [4,4,1,3,1]  
-arr5 = [5,5,1,1,1]  
-arr6 = [1,6,6,1,1]
-
-@sum = 0
-
-
-# Table that holds users score/points 
-scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
-  t << ['One', add_score(arr1, "Ones")]
-  t << :separator
-  t.add_row ['Two', 2]
-  t.add_separator
-  t.add_row ['Three', 3]
-  t.add_separator
-  t.add_row ['Four', 3]
-  t.add_separator
-  t.add_row ['Five', 3]
-  t.add_separator
-  t.add_row ['Six', 3]
-  t.add_separator
-  t.add_row ['Sum', 3]
-  t.add_separator
-  t.add_row ['Bonus', 3]
-  t.add_separator
-  t.add_row ['Three of a Kind', 3]
-  t.add_separator
-  t.add_row ['Four of a Kind', 3]
-  t.add_separator
-  t.add_row ['Full House', 3]
-  t.add_separator
-  t.add_row ['Small Straight', 3]
-  t.add_separator
-  t.add_row ['Large Straight', 3]
-  t.add_separator
-  t.add_row ['Chance', 3]
-  t.add_separator
-  t.add_row ['YAHTZEE', 3]
-  t.add_separator
-  t.add_row ['TOTAL SCORE', 3]
-end
-
-# Table displayed to user that gives them option to select a category 
-pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
-  t << ['One', 1]
-  t << :separator
-  t.add_row ['Two', 2]
-  t.add_separator
-  t.add_row ['Three', 3]
-  t.add_separator
-  t.add_row ['Four', 3]
-  t.add_separator
-  t.add_row ['Five', 3]
-  t.add_separator
-  t.add_row ['Six', 3]
-  t.add_separator
-  t.add_row ['Sum', 3]
-  t.add_separator
-  t.add_row ['Bonus', 3]
-  t.add_separator
-  t.add_row ['Three of a Kind', 3]
-  t.add_separator
-  t.add_row ['Four of a Kind', 3]
-  t.add_separator
-  t.add_row ['Full House', 3]
-  t.add_separator
-  t.add_row ['Small Straight', 3]
-  t.add_separator
-  t.add_row ['Large Straight', 3]
-  t.add_separator
-  t.add_row ['Chance', 3]
-  t.add_separator
-  t.add_row ['YAHTZEE', 3]
-  t.add_separator
-  t.add_row ['TOTAL SCORE', 3]
-end
-puts scoresTable
-
-puts "Select Available Category"
-category = gets.chomp!
-
-
-
-
-class ScoreCard
-end
-
-class Player
-end  
-
-
+ 
 class Game
 
-  
-
-  def roll
-
-  end
-
-
-    def roll
-    
+    def roll     
+        @saved_values ||= []
         @die = (1..6).to_a
         @dicecup = []
-        @die.sample
-        until @dicecup.count == 5 
-        @dicecup << @die.sample
+
+        
+
+        if @saved_values.count > 1
+            @saved_values.each {|x| @dicecup << x }
+            until @dicecup.count == 5 
+                @dicecup << @die.sample
+            end
+        elsif @saved_values.empty? 
+            5.times do |dice|
+                @dicecup << @die.sample
+            end
+            @saved_values = []
+        end
+
+
+        
+
+        p "Here is your roll. Type the dies you want to keep"
+        p @dicecup
+            input = gets.chomp
+            
+        input_array = input.split
+   
+        split_array = input_array.keep_if { |v| v =~ /[1-6]/ }.map(&:to_i)
+
+        split_array.each do |x|
+            if @dicecup.include?(x)
+              @saved_values << x
+            else
+              puts "Please enter dice that are in your cup. No cheating please :) "
+              roll
+            end
+  
+        end
+        
     end
-
-    @dicecup
-
-    def select
-        @dicecupe
-        binding.pry
-        # what ever one(s) they pick roll the rest
-        @dicecup.select {@dicecup} || @dicecup.count == 5
-        binding.pry
-
-    end
-    @dicecup
-
-
-
-
-    
-end
 
   
   
   def player_turn
-
+    roll
+    puts "Did you want to roll again? y/n"
+    answer = gets.chomp!.downcase
+    answer == "y" || answer == "yes" ? roll : answer
+    puts "Did you want your last roll y/n"
+    answer = gets.chomp!.downcase
+    answer == "y" || answer == "yes" ? roll : answer
+    display_table
+    player_card(@dicecup, @category)
   end
 
   def add_score dice_arr, category
+    @sum ||= 0
     cased_category = category.downcase
     dice_str = dice_arr.map(&:to_s).join("")
     score = 0
+    
     case cased_category
-
+      
     when  "ones"
      if dice_arr.include?(1)
+
       score = dice_arr.keep_if{|x| x == 1}.sum
       @sum += score
       score
     else
+      
       @sum += 0
       0
     end 
@@ -200,34 +124,195 @@ end
      @sum += 0
      0
    end
- else
+  when "3 of a kind"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.take(3)
+    second_slice = dice_arr.slice(2,3)
+    
+    if first_slice.uniq.count == 1
+      first_slice.sum
+    elsif second_slice.uniq.count == 1
+      second_slice.sum
+    else
+      0  
+    end
+  when "4 of a kind"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.take(4)
+    second_slice = dice_arr.slice(1,4)
+    
+    if first_slice.uniq.count == 1
+      first_slice.sum
+    elsif second_slice.uniq.count == 1
+      second_slice.sum
+    else
+      0  
+    end
+  when "full house"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.take(3)
+    second_slice = dice_arr.slice(3,2)
+    third_slice = dice_arr.take(2)
+    fourth_slice = dice_arr.slice(2,3) 
+    if first_slice.uniq.count == 1 && second_slice.uniq.count == 1
+      25
+    elsif third_slice.uniq.count == 1 && fourth_slice.uniq.count == 1
+      25
+    else
+      0  
+    end
+  when "small straight"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.uniq.take(4)
+     
+    if first_slice == (1..4).to_a || first_slice == (2..5).to_a || first_slice == (3..6).to_a 
+      30
+    else
+      0  
+    end
+  when "large straight"
+    dice_arr.sort!
+    # p dice_arr
+    first_slice = dice_arr.uniq
+     
+    if first_slice == (1..5).to_a || first_slice == (2..6).to_a  
+      40
+    else
+      0  
+    end
+  when "yahtzee"
+    
+    # p dice_arr
+    first_slice = dice_arr.uniq
+     
+    if first_slice.count == 1   
+      50
+    else
+      0  
+    end
+  when "chance"
+   dice_arr.sum           
+  else
+    puts "It didnt work"
+    0  
+  end  
+
+  end
+
+  
+   
+  def show_sum
+    @sum
+  end
+
+  def player_card dicecup, category
+
+    @scoresTable = Terminal::Table.new :title => 'Scores', :headings => ['Category', 'Points'] do |t|
+      t.add_row ['One', (category == "one" ? add_score(dicecup, "ones") : 0) ]
+      t.add_separator
+      t.add_row ['Two', (category == "two" ? add_score(dicecup, "twos") : 0)]
+      t.add_separator
+      t.add_row ['Three', (category == "three" ? add_score(dicecup, "threes") : 0)]
+      t.add_separator
+      t.add_row ['Four', (category == "four" ? add_score(dicecup, "fours") : 0)]
+      t.add_separator
+      t.add_row ['Five', (category == "five" ? add_score(dicecup, "fives") : 0)]
+      t.add_separator
+      t.add_row ['Six', (category == "six" ? add_score(dicecup, "sixes") : 0)]
+      t.add_separator
+      t.add_row ['Sum', show_sum]
+      t.add_separator
+      t.add_row ['Bonus', (show_sum > 63 ? show_sum += 35 : show_sum)]
+      t.add_separator
+      t.add_row ['Three of a Kind', (category == "three of a kind" ? add_score(dicecup, "3 of a kind") : 0)]
+      t.add_separator
+      t.add_row ['Four of a Kind', (category == "four of a kind" ? add_score(dicecup, "4 of a kind") : 0)]
+      t.add_separator
+      t.add_row ['Full House', (category == "full house" ? add_score(dicecup, "full house") : 0)]
+      t.add_separator
+      t.add_row ['Small Straight', (category == "small straight" ? add_score(dicecup, "small straight") : 0)]
+      t.add_separator
+      t.add_row ['Large Straight', (category == "large straight" ? add_score(dicecup, "large straight") : 0)]
+      t.add_separator
+      t.add_row ['Chance', (category == "chance" ? add_score(dicecup, "chance") : 0)]
+      t.add_separator
+      t.add_row ['YAHTZEE', (category == "yahtzee" ? add_score(dicecup, "yahtzee") : 0)]
+      t.add_separator
+      t.add_row ['TOTAL SCORE', 0]
+    end
+    puts @scoresTable
+  end 
+
+  
+
+  def display_table
+    @picked ||= []
+    
+    pickableTable = Terminal::Table.new :title => 'Choices', :headings => ['Available', 'Points']  do |t|
+      t.add_row ['One', 0] unless @picked.include? 'one'
+      t.add_separator unless @picked.include? 'one'
+      t.add_row ['Two', 0] unless @picked.include? 'two'
+      t.add_separator unless @picked.include? 'two'
+      t.add_row ['Three', 0] unless @picked.include? 'three'
+      t.add_separator unless @picked.include? 'three'
+      t.add_row ['Four', 0] unless @picked.include? 'four'
+      t.add_separator unless @picked.include? 'four'
+      t.add_row ['Five', 0] unless @picked.include? 'five'
+      t.add_separator unless @picked.include? 'five'
+      t.add_row ['Six', 0] unless @picked.include? 'six'
+      t.add_separator unless @picked.include? 'six'
+      t.add_row ['Three of a Kind', 0] unless @picked.include? 'three of a kind'
+      t.add_separator unless @picked.include? 'three of a kind'
+      t.add_row ['Four of a Kind', 0] unless @picked.include? 'four of a kind'
+      t.add_separator unless @picked.include? 'four of a kind'
+      t.add_row ['Full House', 0] unless @picked.include? 'full house'
+      t.add_separator unless @picked.include? 'full house'
+      t.add_row ['Small Straight', 0] unless @picked.include? 'small straight'
+      t.add_separator unless @picked.include? 'small straight'
+      t.add_row ['Large Straight', 0] unless @picked.include? 'large straight'
+      t.add_separator unless @picked.include? 'large straight'
+      t.add_row ['Chance', 0] unless @picked.include? 'chance'
+      t.add_separator unless @picked.include? 'chance'
+      t.add_row ['YAHTZEE', 0] unless @picked.include? 'yahtzee'
+    end 
+    puts pickableTable
+    puts "Select Available Category"
+    @category = gets.chomp!.downcase
+    @picked << @category
+  end
+end 
 
 
-  puts "It didnt work"  
-end  
-
-end  
-my_game = Game.new
-p my_game.roll
-p "Type the dies you want to keep"
 
 
 
-end
 
-end
+# p my_game.show_sum
+
+
+
+
+
+ 
+    
+
 
   
 
 
 
-
-
-
-
-
-
-
-
+# myScoreCard = ScoreCard.new
+# myScoreCard.display_table
+# myScoreCard.chosen
+# myScoreCard.display_table
+my_game = Game.new
+my_game.player_turn
+my_game.player_turn
+# p dice_arr
+# p my_game.add_score(dice_arr, "yahtzee")
 
 
